@@ -1,0 +1,96 @@
+import torch
+import torch.nn as nn
+import CBAM as cb
+
+class DualNet(nn.Module):
+    def __init__(self, channels, num_of_layers=15):
+        super(DualNet, self).__init__()
+        kernel_size = 3
+        padding = 1
+        features = 64
+        groups =1 
+        self.conv1_1 = nn.Sequential(nn.Conv2d(in_channels=channels,out_channels=features,kernel_size=kernel_size,padding=padding,groups=groups,bias=False),nn.BatchNorm2d(features),nn.ReLU(inplace=True))
+        self.conv1_2 = nn.Sequential(nn.Conv2d(in_channels=features,out_channels=features,kernel_size=kernel_size,padding=2,groups=groups,bias=False,dilation=2),nn.BatchNorm2d(features),nn.ReLU(inplace=True))
+        self.conv1_3 = nn.Sequential(nn.Conv2d(in_channels=features,out_channels=features,kernel_size=kernel_size,padding=1,groups=groups,bias=False),nn.BatchNorm2d(features),nn.ReLU(inplace=True))
+        self.conv1_4 = nn.Sequential(nn.Conv2d(in_channels=features,out_channels=features,kernel_size=kernel_size,padding=1,groups=groups,bias=False),nn.BatchNorm2d(features),nn.ReLU(inplace=True))
+        self.conv1_5 = nn.Sequential(nn.Conv2d(in_channels=features,out_channels=features,kernel_size=kernel_size,padding=2,groups=groups,bias=False,dilation=2),nn.BatchNorm2d(features),nn.ReLU(inplace=True))
+        self.conv1_6 = nn.Sequential(nn.Conv2d(in_channels=features,out_channels=features,kernel_size=kernel_size,padding=1,groups=groups,bias=False),nn.BatchNorm2d(features),nn.ReLU(inplace=True))
+        self.conv1_7 = nn.Sequential(nn.Conv2d(in_channels=features,out_channels=features,kernel_size=kernel_size,padding=padding,groups=groups,bias=False),nn.BatchNorm2d(features),nn.ReLU(inplace=True))
+        self.conv1_8 = nn.Sequential(nn.Conv2d(in_channels=features,out_channels=features,kernel_size=kernel_size,padding=1,groups=groups,bias=False),nn.BatchNorm2d(features),nn.ReLU(inplace=True))
+        self.conv1_9 = nn.Sequential(nn.Conv2d(in_channels=features,out_channels=features,kernel_size=kernel_size,padding=2,groups=groups,bias=False,dilation=2),nn.BatchNorm2d(features),nn.ReLU(inplace=True))
+        self.conv1_10 = nn.Sequential(nn.Conv2d(in_channels=features,out_channels=features,kernel_size=kernel_size,padding=1,groups=groups,bias=False),nn.BatchNorm2d(features),nn.ReLU(inplace=True))
+        self.conv1_11 = nn.Sequential(nn.Conv2d(in_channels=features,out_channels=features,kernel_size=kernel_size,padding=1,groups=groups,bias=False),nn.BatchNorm2d(features),nn.ReLU(inplace=True))
+        self.conv1_12 = nn.Sequential(nn.Conv2d(in_channels=features,out_channels=features,kernel_size=kernel_size,padding=2,groups=groups,bias=False,dilation=2),nn.BatchNorm2d(features),nn.ReLU(inplace=True))
+        self.conv1_13 = nn.Sequential(nn.Conv2d(in_channels=features,out_channels=features,kernel_size=kernel_size,padding=padding,groups=groups,bias=False),nn.BatchNorm2d(features),nn.ReLU(inplace=True))
+        self.conv1_14 = nn.Sequential(nn.Conv2d(in_channels=features,out_channels=features,kernel_size=kernel_size,padding=padding,groups=groups,bias=False),nn.BatchNorm2d(features),nn.ReLU(inplace=True))
+        self.conv1_15 = nn.Sequential(nn.Conv2d(in_channels=features,out_channels=features,kernel_size=kernel_size,padding=1,groups=groups,bias=False),nn.BatchNorm2d(features),nn.ReLU(inplace=True))
+        self.conv1_16 = nn.Conv2d(in_channels=features,out_channels=features,kernel_size=3,padding=1,groups=groups,bias=False)
+        self.conv1_17 = nn.Conv2d(in_channels=features,out_channels=3,kernel_size=1,padding=0,groups=groups,bias=False)
+        self.conv3 = nn.Conv2d(in_channels=6,out_channels=3,kernel_size=1,stride=1,padding=0,groups=1,bias=True)
+        self.ReLU = nn.ReLU(inplace=True)
+        self.BN = nn.BatchNorm2d(2*features)
+        self.conv2_1 = nn.Sequential(nn.Conv2d(in_channels=channels,out_channels=features,kernel_size=kernel_size,padding=padding,groups=groups,bias=False),nn.ReLU(inplace=True))
+        self.conv2_2 = nn.Sequential(nn.Conv2d(in_channels=features,out_channels=features,kernel_size=kernel_size,padding=1,groups=groups,bias=False),nn.ReLU(inplace=True))
+        self.conv2_3 = nn.Sequential(nn.Conv2d(in_channels=features,out_channels=features,kernel_size=kernel_size,padding=1,groups=groups,bias=False),nn.ReLU(inplace=True))
+        self.conv2_4 = nn.Sequential(nn.Conv2d(in_channels=features,out_channels=features,kernel_size=kernel_size,padding=1,groups=groups,bias=False),nn.ReLU(inplace=True))
+        self.conv2_5 = nn.Sequential(nn.Conv2d(in_channels=features,out_channels=features,kernel_size=kernel_size,padding=1,groups=groups,bias=False),nn.ReLU(inplace=True))
+        self.conv2_6 = nn.Sequential(nn.Conv2d(in_channels=features,out_channels=features,kernel_size=kernel_size,padding=1,groups=groups,bias=False),nn.ReLU(inplace=True))
+        self.conv2_7 = nn.Sequential(nn.Conv2d(in_channels=features,out_channels=features,kernel_size=kernel_size,padding=padding,groups=groups,bias=False),nn.ReLU(inplace=True))
+        self.conv2_8 = nn.Sequential(nn.Conv2d(in_channels=features,out_channels=features,kernel_size=kernel_size,padding=1,groups=groups,bias=False),nn.ReLU(inplace=True))
+        self.conv2_9 = nn.Sequential(nn.Conv2d(in_channels=features,out_channels=features,kernel_size=kernel_size,padding=1,groups=groups,bias=False),nn.ReLU(inplace=True))
+        self.conv2_10 = nn.Sequential(nn.Conv2d(in_channels=features,out_channels=features,kernel_size=kernel_size,padding=1,groups=groups,bias=False),nn.ReLU(inplace=True))
+        self.conv2_11 = nn.Sequential(nn.Conv2d(in_channels=features,out_channels=features,kernel_size=kernel_size,padding=1,groups=groups,bias=False),nn.ReLU(inplace=True))
+        self.conv2_12 = nn.Sequential(nn.Conv2d(in_channels=features,out_channels=features,kernel_size=kernel_size,padding=1,groups=groups,bias=False),nn.ReLU(inplace=True))
+        self.conv2_13 = nn.Sequential(nn.Conv2d(in_channels=features,out_channels=features,kernel_size=kernel_size,padding=padding,groups=groups,bias=False),nn.ReLU(inplace=True))
+        self.conv2_14 = nn.Sequential(nn.Conv2d(in_channels=features,out_channels=features,kernel_size=kernel_size,padding=padding,groups=groups,bias=False),nn.ReLU(inplace=True))
+        self.conv2_15 = nn.Sequential(nn.Conv2d(in_channels=features,out_channels=features,kernel_size=kernel_size,padding=1,groups=groups,bias=False),nn.ReLU(inplace=True))
+        self.conv2_16 = nn.Conv2d(in_channels=features,out_channels=features,kernel_size=1,padding=0,groups=groups,bias=False)
+        self.conv2_17 = nn.Conv2d(in_channels=features,out_channels=3,kernel_size=1,padding=0,groups=groups,bias=False)
+        self.conv3_1 = nn.Conv2d(in_channels=2*features,out_channels=3,kernel_size=1,padding=0,groups=groups,bias=False)
+        self.conv3_2 = nn.Conv2d(in_channels=6,out_channels=3,kernel_size=1,padding=0,groups=groups,bias=False)
+        self.cbam1 = cb.CBAM(gate_channels = features, pool_types= ['avg'], no_spatial= True)              #      *********************************
+        self.cbam2 = cb.CBAM(gate_channels = features, pool_types= ['max'], no_spatial= True)              #      *********************************
+        self.cbam3 = cb.CBAM(gate_channels = features, pool_types= ['avg', 'max'], no_spatial= True)              #      *********************************
+        self.cbam4 = cb.CBAM(gate_channels = features, pool_types= ['avg', 'max'], no_spatial= False)              #      *********************************
+    def forward(self, x):
+        # input = x
+        x1 = self.conv1_1(x)
+        x1 = self.cbam3(x1)
+        x1 = self.conv1_3(x1)
+        x1 = self.conv1_4(x1)
+        x1 = self.cbam3(x1)
+        x1 = self.conv1_6(x1)
+        x1 = self.conv1_7(x1)
+        x1 = self.conv1_8(x1)
+        x1 = self.cbam3(x1)
+        x1 = self.conv1_10(x1)
+        x1 = self.conv1_11(x1)
+        x1 = self.cbam4(x1)
+        x1 = self.conv1_13(x1)
+        x1 = self.conv1_14(x1)
+        x1 = self.conv1_15(x1)
+        x1 = self.conv1_16(x1)
+        x2 = self.conv2_1(x)
+        x2 = self.conv2_2(x2)
+        x2 = self.conv2_3(x2)
+        x2 = self.conv2_4(x2)
+        x2 = self.conv2_5(x2)
+        x2 = self.conv2_6(x2)
+        x2 = self.conv2_7(x2)   
+        x2 = self.conv2_8(x2)
+        x2 = self.conv2_9(x2)
+        x2 = self.conv2_10(x2)
+        x2 = self.conv2_11(x2)
+        x2 = self.conv2_12(x2)
+        x2 = self.conv2_13(x2)
+        x2 = self.conv2_14(x2)
+        x2 = self.conv2_15(x2)
+        x2 = self.conv2_16(x2)
+        x3 = torch.cat([x1,x2],1)
+        x3 = self.BN(x3)
+        x3 = self.ReLU(x3)
+        x3 = self.conv3_1(x3)
+        x4 = torch.cat([x,x3],1)
+        x4 = self.conv3_2(x4) 
+        out = x - x4
+        return out
